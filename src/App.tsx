@@ -10,6 +10,7 @@ function App() {
   const { view, status, load } = usePagination<Item, { results: Item[] }>({
     size: 20,
     initIndex: 0,
+    useLazyLoad: true,
     url: 'https://pokeapi.co/api/v2/pokemon',
     parser: (data) => data.results,
   });

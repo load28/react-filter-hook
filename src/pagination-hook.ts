@@ -24,6 +24,7 @@ type Option<TView, TServerData> = {
   size: number;
   url: string;
   parser: (data: TServerData) => TView[];
+  useLazyLoad?: boolean;
   urlBuilder?: (url: string, index: number, size: number) => string;
 };
 
@@ -32,6 +33,7 @@ const createSafeParams: <TView, TServerData>(option: Option<TView, TServerData>)
   option: Option<TView, TServerData>,
 ) => ({
   ...option,
+  useLazyLoad: false,
   urlBuilder: option.urlBuilder || defaultUrlBuilder,
 });
 
@@ -70,9 +72,11 @@ const usePagination = <TView, TServerData>(option: Option<TView, TServerData>) =
   );
 
   useEffect(() => {
-    const abortController = new AbortController();
-    fetchDataHandler(option.initIndex, abortController.signal);
-    return () => abortController.abort();
+    if (!option.useLazyLoad) {
+      const abortController = new AbortController();
+      fetchDataHandler(option.initIndex, abortController.signal);
+      return () => abortController.abort();
+    }
   }, []);
 
   return {
