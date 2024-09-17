@@ -1,21 +1,26 @@
 import './App.css';
-import useFilter from './filter-hook.ts';
+import usePagination from './pagination-hook.ts';
+
+type Item = {
+  name: string;
+  url: string;
+};
 
 function App() {
-  const { view, status, more } = useFilter<{ name: string; url: string }>({
-    index: 0,
-    page: 20,
+  const { view, status, load } = usePagination<Item, { results: Item[] }>({
+    size: 20,
+    initIndex: 0,
     url: 'https://pokeapi.co/api/v2/pokemon',
+    parser: (data) => data.results,
   });
 
   return (
     <>
-      {status === 'complete' &&
-        view?.map((item) => {
-          return <li key={item.name}>{item.name}</li>;
-        })}
-      {status === 'error' && <>Error</>}
-      <button onClick={() => more()}>load</button>
+      {view?.map((item) => {
+        return <li key={item.name}>{item.name}</li>;
+      })}
+      {status.type === 'error' && status.error.message}
+      <button onClick={() => load()}>load</button>
     </>
   );
 }
