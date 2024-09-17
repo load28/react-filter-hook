@@ -66,7 +66,7 @@ const usePagination = <TView, TServerData>(option: Option<TView, TServerData>) =
       };
       req().then();
     },
-    [option.size, option.url],
+    [option],
   );
 
   const load = useCallback(() => {
