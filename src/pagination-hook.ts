@@ -48,17 +48,17 @@ const usePagination = <TView, TServerData>(option: Option<TView, TServerData>) =
   const [status, setStatus] = useState<Status>({ type: 'idle' });
 
   const fetchDataHandler = useCallback(
-    (currentIndex: number, signal: AbortSignal) => {
+    (_currentIndex: number, signal: AbortSignal) => {
       const req = async () => {
         setStatus(() => ({ type: 'loading' }));
         try {
           const safeParams = createSafeParams(option);
-          const fetchUrl = safeParams.urlBuilder(safeParams.url, currentIndex, safeParams.size);
+          const fetchUrl = safeParams.urlBuilder(safeParams.url, _currentIndex, safeParams.size);
           const data = await fetchData<TServerData>(fetchUrl, signal);
           const parsingData = option.parser(data);
 
           setView((prevData) => [...prevData, ...parsingData]);
-          setCurrentIndex(currentIndex + safeParams.size);
+          setCurrentIndex(_currentIndex + safeParams.size);
           setStatus(() => ({ type: 'complete' }));
         } catch (error: unknown) {
           if (error instanceof Error) {
