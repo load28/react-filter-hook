@@ -69,22 +69,20 @@ const usePagination = <TView, TServerData>(option: Option<TView, TServerData>) =
     [option],
   );
 
-  const load = useCallback(() => {
-    const abortController = new AbortController();
-    fetchDataHandler(currentIndex, abortController.signal);
-    return abortController;
-  }, [fetchDataHandler, currentIndex]);
-
   useEffect(() => {
     const abortController = new AbortController();
     fetchDataHandler(option.initIndex, abortController.signal);
     return () => abortController.abort();
-  }, [fetchDataHandler, option.initIndex]);
+  }, []);
 
   return {
     view,
     status,
-    load,
+    load: () => {
+      const abortController = new AbortController();
+      fetchDataHandler(currentIndex, abortController.signal);
+      return abortController;
+    },
   };
 };
 
